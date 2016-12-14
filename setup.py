@@ -4,9 +4,6 @@ from setuptools import setup, find_packages
 with open('README.rst') as f:
     readme = f.read()
 
-with open('LICENSE') as f:
-    license = f.read()
-
 setup(
     name='stader',
     version='0.0.1',
@@ -15,6 +12,14 @@ setup(
     author='Richard Joyce',
     author_email='rjoyce@ucdavis.edu',
     url='https://github.com/richjoyce/stader',
-    license=license,
-    packages=find_packages(exclude=('tests', 'docs', 'examples'))
+    license='BSD (3-clause)',
+    packages=find_packages(exclude=('tests', 'docs', 'examples')),
+    classifiers=[
+                 'Intended Audience :: Science/Research',
+                 'Programming Language :: Python :: 2.7',
+                 'Programming Language :: Python :: 3.3',
+                 'Programming Language :: Python :: 3.4',
+                 'License :: OSI Approved :: BSD License',
+                 'Topic :: Scientific/Engineering'
+                 ]
 )
