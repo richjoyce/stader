@@ -14,6 +14,8 @@ setup(
     url='https://github.com/richjoyce/stader',
     license='BSD (3-clause)',
     packages=find_packages(exclude=('tests', 'docs', 'examples')),
+    package_data={'stader': ['data/*.json']},
+    install_requires=['numpy', 'scipy'],
     classifiers=[
                  'Intended Audience :: Science/Research',
                  'Programming Language :: Python :: 2.7',

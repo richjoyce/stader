@@ -5,7 +5,7 @@ import numpy as np
 
 import stader
 
-d = stader.read_json('b747_flight_condition2.json')
+d = stader.load_aircraft('b747_flight_condition2')
 ac = stader.Aircraft(d)
 
 msec = 15

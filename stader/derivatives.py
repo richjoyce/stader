@@ -1,10 +1,20 @@
+import os
 import json
 import numpy as np
 import scipy
 import scipy.linalg
 
 
-__all__ = ["read_json", "calculate_stability"]
+__all__ = ["load_aircraft", "read_json", "calculate_stability"]
+
+
+def load_aircraft(name):
+    import pkg_resources
+    name = os.path.join('data', name)
+    name += '.json'
+    filename = pkg_resources.resource_filename(__name__, name)
+    return read_json(filename)
+
 
 def read_json(json_filename):
     with open(json_filename) as f:
