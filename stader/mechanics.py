@@ -1,28 +1,51 @@
 import numpy as np
 import scipy.signal
+from .controls import ControlSurface
 
 __all__ = ["Aircraft", "AircraftLateral", "AircraftLongitudinal"]
 
 class Aircraft(object):
-    def __init__(self, derivatives):
+    _lat_attr = ['p', 'r', 'yaw', 'roll', 'v', 'y']
+    _long_attr = ['q', 'pitch', 'u', 'w', 'x', 'z']
+    _controls = ['elevator', 'thrust', 'aileron', 'rudder']
+
+    def __init__(self, derivatives, controls={}):
         self.lateral = AircraftLateral(derivatives)
         self.longitudinal = AircraftLongitudinal(derivatives)
+
+        for control in Aircraft._controls:
+            if control not in controls:
+                controls[control] = ControlSurface()
+            setattr(self, control, controls[control])
+
+        self._update_attr()
+
+
+
+    def _update_attr(self):
+        for attr in Aircraft._lat_attr:
+            setattr(self, attr, getattr(self.lateral, attr))
+        for attr in Aircraft._long_attr:
+            setattr(self, attr, getattr(self.longitudinal, attr))
 
 
     def update(self, dt, inputs={}):
         ulat = np.zeros(self.lateral._n_inputs)
         ulong = np.zeros(self.longitudinal._n_inputs)
-        if 'elevator' in inputs:
-            ulong[0] = inputs['elevator']
-        if 'thrust' in inputs:
-            ulong[1] = inputs['thrust']
-        if 'aileron' in inputs:
-            ulat[0] = inputs['aileron']
-        if 'rudder' in inputs:
-            ulat[1] = inputs['rudder']
+        for control in Aircraft._controls:
+            if control not in inputs:
+                inputs[control] = 0.0
+            getattr(self, control).update(dt, inputs[control])
+
+        ulong[0] = inputs['elevator']
+        ulong[1] = inputs['thrust']
+        ulat[0] = inputs['aileron']
+        ulat[1] = inputs['rudder']
 
         self.lateral.update(dt, ulat)
         self.longitudinal.update(dt, ulong)
+
+        self._update_attr()
 
 
     def __getattr__(self, attr):
@@ -85,15 +108,15 @@ class AircraftLateral(AircraftDynamics):
                       (0, 0),
                       (0, 0)))
         super().__init__(A, B)
-        self._update_attributes()
+        self._update_attr()
 
 
     def update(self, dt, u=None):
         super().update(dt, u)
-        self._update_attributes()
+        self._update_attr()
 
 
-    def _update_attributes(self):
+    def _update_attr(self):
         self.v = self._x[0]
         self.p = self._x[1]
         self.r = self._x[2]
@@ -129,17 +152,17 @@ class AircraftLongitudinal(AircraftDynamics):
                       (0, 0),
                       (0, 0)))
         super().__init__(A, B)
-        self._update_attributes()
+        self._update_attr()
         self.x = 0.0
 
 
     def update(self, dt, u=None):
         super().update(dt, u)
-        self._update_attributes()
+        self._update_attr()
         self.x += (self.u + self.U0)*dt
 
 
-    def _update_attributes(self):
+    def _update_attr(self):
         self.u = self._x[0]
         self.w = self._x[1]
         self.q = self._x[2]
