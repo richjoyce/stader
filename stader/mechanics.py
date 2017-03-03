@@ -107,12 +107,12 @@ class AircraftLateral(AircraftDynamics):
                       (0, 0),
                       (0, 0),
                       (0, 0)))
-        super().__init__(A, B)
+        super(AircraftLateral, self).__init__(A, B)
         self._update_attr()
 
 
     def update(self, dt, u=None):
-        super().update(dt, u)
+        super(AircraftLateral, self).update(dt, u)
         self._update_attr()
 
 
@@ -151,13 +151,13 @@ class AircraftLongitudinal(AircraftDynamics):
                        s['M']['delta_th'] + s['M']['wdot']*s['Z']['delta_th']),
                       (0, 0),
                       (0, 0)))
-        super().__init__(A, B)
+        super(AircraftLongitudinal, self).__init__(A, B)
         self._update_attr()
         self.x = 0.0
 
 
     def update(self, dt, u=None):
-        super().update(dt, u)
+        super(AircraftLongitudinal, self).update(dt, u)
         self._update_attr()
         self.x += (self.u + self.U0)*dt
 
